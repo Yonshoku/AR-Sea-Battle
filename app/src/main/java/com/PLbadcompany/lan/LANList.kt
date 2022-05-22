@@ -23,6 +23,10 @@ import com.PLbadcompany.R
 import java.net.InetAddress
 import java.net.ServerSocket
 
+// Todo
+// 1. Add connection in onResolved
+// 2. Test nsd for working on 2 devices
+
 class LANList : AppCompatActivity() {
     private val TAG : String = "LAN_Activity"
     private val SENSITIVE_PERMISSIONS_CODE = 1
@@ -50,13 +54,13 @@ class LANList : AppCompatActivity() {
 
 
     override fun onResume() {
-        Log.v(TAG, "onResume called")
+        if (mRegistrationListener == null)
+            registerService(localPort)
 
         super.onResume()
     }
 
     override fun onPause() {
-        Log.v(TAG, "onPause called")
         tearDownService()
 
         super.onPause()
@@ -178,13 +182,6 @@ class LANList : AppCompatActivity() {
     // Every device create service so everyone can find each others
 
     private fun registerService(port: Int) {
-        // Create NsdServiceInfo
-        nsdServiceInfo = NsdServiceInfo().apply {
-            serviceName = "AR_SeaBattle"
-            serviceType = "_arseabattle._tcp"
-            setPort(port)
-        }
-
         // Create registration listener
         // It's saved for further unregistration use
         mRegistrationListener = object : NsdManager.RegistrationListener {
@@ -218,10 +215,20 @@ class LANList : AppCompatActivity() {
             }
         }
 
+        // Create NsdServiceInfo
+        nsdServiceInfo = NsdServiceInfo().apply {
+            serviceName = "AR_SeaBattle"
+            serviceType = "_arseabattle._tcp"
+            setPort(port)
+        }
+
+        // Create nsdManager and register service
         nsdManager = (getSystemService(Context.NSD_SERVICE) as NsdManager)
         nsdManager.registerService(nsdServiceInfo, NsdManager.PROTOCOL_DNS_SD, mRegistrationListener)
     }
 
+    // Copied from https://github.com/aosp-mirror/platform_development/blob/73f1ba806fe5fa0dad2334b168deefaf6d8ca5c3/samples/training/NsdChat/src/com/example/android/nsdchat/NsdHelper.java
+    // It works and no one don't know how
     fun unregisterService() {
         if (mRegistrationListener != null) {
             try {
@@ -280,6 +287,8 @@ class LANList : AppCompatActivity() {
         nsdManager.discoverServices(nsdServiceInfo.serviceType, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener)
     }
 
+    // Copied from https://github.com/aosp-mirror/platform_development/blob/73f1ba806fe5fa0dad2334b168deefaf6d8ca5c3/samples/training/NsdChat/src/com/example/android/nsdchat/NsdHelper.java
+    // It works and no one don't know how
     fun stopDiscovery() {
         if (mDiscoveryListener != null) {
             try {
@@ -293,8 +302,7 @@ class LANList : AppCompatActivity() {
 
     // Connect to discovered service
     private fun resolveService(service : NsdServiceInfo) {
-        nsdManager.resolveService(service, mResolveListener)
-
+        // Create resolve listener
         mResolveListener = object : NsdManager.ResolveListener {
 
             override fun onResolveFailed(serviceInfo: NsdServiceInfo, errorCode: Int) {
@@ -314,15 +322,18 @@ class LANList : AppCompatActivity() {
                 resolvedHost = serviceInfo.host
             }
         }
+
+        // Start resolving
+        nsdManager.resolveService(service, mResolveListener)
     }
 
-    // Closing or pausing LANList
+    // Stop service
     private fun tearDownService() {
         stopDiscovery()
         unregisterService()
     }
 
-
+    // Stop lan
     private fun tearDown() {
         tearDownService()
         serverSocket.close()
