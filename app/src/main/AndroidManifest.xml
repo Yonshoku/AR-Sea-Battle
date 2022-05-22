@@ -4,10 +4,12 @@
     package="com.PLbadcompany">
 
     <!-- Required for Nearby Connections -->
-    <uses-permission android:name="android.permission.SEND_SMS"/>
-    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- Runtime permissions -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
@@ -25,10 +27,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Varyag">
         <activity
-            android:name=".LANList"
-            android:exported="false" />
-        <activity
-            android:name=".LANList"
+            android:name=".lan.LANList"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
