@@ -6,20 +6,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/metalic"
-    tools:context=".MainActivity">
+    tools:context=".core.MainMenuActivity">
 
-    <Button
-        android:id="@+id/LANButton"
+    <LinearLayout
+        android:id="@+id/main_menu_buttons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="local game"
+        android:layout_marginTop="300dp"
+        android:orientation="vertical"
         android:visibility="visible"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.700"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:visibility="visible" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/singleGameButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:text="SINGLE GAME"
+            android:visibility="visible"
+            tools:visibility="visible" />
+
+        <Button
+            android:id="@+id/lanButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="local game"
+            android:visibility="visible"
+            tools:visibility="visible" />
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/imageView"

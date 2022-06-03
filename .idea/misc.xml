@@ -5,7 +5,12 @@
       <map>
         <entry key="..\:/Users/Elisei/StudioProjects/AR-Sea-Battle/app/src/main/res/layout/activity_main.xml" value="0.2640625" />
         <entry key="..\:/Users/Elisei/StudioProjects/AR-Sea-Battle/app/src/main/res/layout/activity_permissions_request.xml" value="0.2640625" />
+        <entry key="..\:/Users/Elisei/StudioProjects/AR-Sea-Battle/app/src/main/res/layout/lan_connections_list_activity.xml" value="0.296875" />
+        <entry key="..\:/Users/Elisei/StudioProjects/AR-Sea-Battle/app/src/main/res/layout/lan_permissions_activity.xml" value="0.296875" />
+        <entry key="..\:/Users/Elisei/StudioProjects/AR-Sea-Battle/app/src/main/res/layout/lan_permissions_handler.xml" value="0.29981884057971014" />
         <entry key="..\:/Users/Elisei/StudioProjects/AR-Sea-Battle/app/src/main/res/layout/lanlist.xml" value="0.2640625" />
+        <entry key="..\:/Users/Elisei/StudioProjects/AR-Sea-Battle/app/src/main/res/layout/main_menu_activity.xml" value="0.33" />
+        <entry key="..\:/Users/Elisei/StudioProjects/AR-Sea-Battle/app/src/main/res/layout/start_app_check_activity.xml" value="0.35104166666666664" />
         <entry key="..\:/Users/ghost/AndroidStudioProjects/Varyag/app/src/main/res/layout/activity_local_connections_list.xml" value="0.25" />
         <entry key="..\:/Users/ghost/AndroidStudioProjects/Varyag/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/Users/ghost/AndroidStudioProjects/Varyag/app/src/main/res/layout/activity_permissions_request.xml" value="0.5" />

@@ -12,12 +12,15 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- Runtime permissions -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <!-- Only required for apps targeting Android 12 and higher -->
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+
+    <uses-feature android:name="android.hardware.camera.ar" />
 
     <application
         android:allowBackup="true"
@@ -26,11 +29,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Varyag">
+        <meta-data android:name="com.google.ar.core" android:value="required" />
         <activity
-            android:name=".lan.LANList"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
+            android:name=".core.StartAppCheckingActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,6 +39,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".lan.ConnectionsListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".core.ARCoreSessionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".core.MainMenuActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
