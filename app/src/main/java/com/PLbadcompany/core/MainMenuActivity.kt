@@ -26,7 +26,7 @@ class MainMenuActivity : AppCompatActivity() {
 
         singleGameButton = findViewById(R.id.singleGameButton)
         singleGameButton.setOnClickListener {
-            startActivity(Intent(this, ARCoreSessionActivity::class.java))
+            startActivity(Intent(this, SinglePlayerActivity::class.java))
         }
     }
 

@@ -11,8 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.PLbadcompany.R
 import com.PLbadcompany.common.DialogHelper
 import com.PLbadcompany.common.PermissionHelper
-import com.google.ar.core.ArCoreApk
-import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException
 
 // TODO
 // 1. Test all checking failures
@@ -41,7 +39,7 @@ class StartAppCheckingActivity : AppCompatActivity() {
 
         // Call checkArAvailability to get it's return from cache in the future
         // It will request permissions if device supports AR
-        checkArAvailability()
+        // checkArAvailability()
     }
 
     override fun onStart() {
@@ -52,7 +50,7 @@ class StartAppCheckingActivity : AppCompatActivity() {
         super.onResume()
 
         // Request installation or updating of google services if it's needed
-        try {
+       /* try {
             when (ArCoreApk.getInstance().requestInstall(this, mUserRequestedInstall)) {
                 ArCoreApk.InstallStatus.INSTALL_REQUESTED -> {
                     mUserRequestedInstall = false
@@ -76,11 +74,11 @@ class StartAppCheckingActivity : AppCompatActivity() {
                 ARCORE_INSTALLATION_FAILED_MESSAGE,
                 { android.os.Process.killProcess(android.os.Process.myPid()) }
             )
-        }
+        } */
     }
 
     // ARCore and google services availability
-    private fun checkArAvailability() {
+   /* private fun checkArAvailability() {
         val availability = ArCoreApk.getInstance().checkAvailability(this)
 
         if (availability.isTransient) {
@@ -99,7 +97,7 @@ class StartAppCheckingActivity : AppCompatActivity() {
             if (!permissionHelper.hasPermissions(this, permissions))
                 permissionHelper.requestPermissions(this, permissions, requestCode)
         }
-    }
+    } */
 
     // Handle permission request result
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
