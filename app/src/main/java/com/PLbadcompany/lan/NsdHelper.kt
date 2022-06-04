@@ -116,6 +116,7 @@ class NsdHelper (val connectionsListActivity: ConnectionsListActivity) {
                     service.serviceName.contains("NsdChat") -> { // Service discovered other one
                         connectionsListActivity.add(service.serviceName)
                         // Try to connect
+                        Log.i(TAG, " Service discovered $service")
                         resolveService(service)
                     }
                 }

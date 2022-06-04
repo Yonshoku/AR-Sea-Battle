@@ -44,6 +44,7 @@ class StartAppCheckingActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        startActivity(Intent(this, MainMenuActivity::class.java))
     }
 
     override fun onResume() {
