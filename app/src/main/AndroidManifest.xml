@@ -47,7 +47,6 @@
             android:exported="false" />
         <activity
             android:name=".core.SinglePlayerActivity"
-            android:screenOrientation="landscape"
             android:exported="false" />
         <activity
             android:name=".core.MainMenuActivity"

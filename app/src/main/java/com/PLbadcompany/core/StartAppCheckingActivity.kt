@@ -1,16 +1,24 @@
 package com.PLbadcompany.core
 
 import android.Manifest
+import android.app.Activity
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.PLbadcompany.R
 import com.PLbadcompany.common.DialogHelper
 import com.PLbadcompany.common.PermissionHelper
+import com.google.ar.core.ArCoreApk
+import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException
+
 
 // TODO
 // 1. Test all checking failures
@@ -32,6 +40,7 @@ class StartAppCheckingActivity : AppCompatActivity() {
 
     private var dialogHelper : DialogHelper =  DialogHelper()
     private var permissionHelper : PermissionHelper = PermissionHelper()
+    val MIN_OPENGL_VERSION = 3.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,14 +53,18 @@ class StartAppCheckingActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        startActivity(Intent(this, MainMenuActivity::class.java))
+
+        checkArAvailability()
+
+        if (checkIsOpenGLSupported())
+            startActivity(Intent(this, MainMenuActivity::class.java))
     }
 
     override fun onResume() {
         super.onResume()
 
         // Request installation or updating of google services if it's needed
-       /* try {
+       try {
             when (ArCoreApk.getInstance().requestInstall(this, mUserRequestedInstall)) {
                 ArCoreApk.InstallStatus.INSTALL_REQUESTED -> {
                     mUserRequestedInstall = false
@@ -75,11 +88,11 @@ class StartAppCheckingActivity : AppCompatActivity() {
                 ARCORE_INSTALLATION_FAILED_MESSAGE,
                 { android.os.Process.killProcess(android.os.Process.myPid()) }
             )
-        } */
+        }
     }
 
     // ARCore and google services availability
-   /* private fun checkArAvailability() {
+   private fun checkArAvailability() {
         val availability = ArCoreApk.getInstance().checkAvailability(this)
 
         if (availability.isTransient) {
@@ -94,52 +107,21 @@ class StartAppCheckingActivity : AppCompatActivity() {
             dialogHelper.showOkDialog(this,
                 DEVICE_DOESNT_SUPPORT_AR_MESSAGE,
                 {android.os.Process.killProcess(android.os.Process.myPid())})
-        } else {
-            if (!permissionHelper.hasPermissions(this, permissions))
-                permissionHelper.requestPermissions(this, permissions, requestCode)
         }
-    } */
+    }
 
-    // Handle permission request result
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    fun checkIsOpenGLSupported(): Boolean {
+        val openGlVersionString =
+            (this.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager)
+                .deviceConfigurationInfo
+                .glEsVersion
 
-        if (this.requestCode == requestCode) {
-            if (!grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                // Some permissions wasn't granted
-
-                if (permissions.any { shouldShowRequestPermissionRationale(it) }) {
-                    // Some permissions can be requested again
-                    // Ask user if he wants to request again
-
-                    dialogHelper.showDialog(this,
-                        "Permission",
-                        ASK_USER_REQUEST_PERMISSION_AGAIN_MESSAGE,
-                        "Request permissions again",
-                        "Quit",
-                        { permissionHelper.requestPermissions(this, permissions, requestCode) },
-                        { android.os.Process.killProcess(android.os.Process.myPid()) }
-                    )
-                } else {
-                    // Every permission denied forever
-                    // Ask user if he wants to open the settings
-
-                    dialogHelper.showDialog(this,
-                        "Permission",
-                        OPEN_SETTINGS_MESSAGE,
-                        "Open settings",
-                        "Quit",
-                        { permissionHelper.openSettings(this) },
-                        { android.os.Process.killProcess(android.os.Process.myPid()) }
-                    )
-                }
-
-            } else {
-                // All permission were granted -> open main menu
-                startActivity(Intent(this, MainMenuActivity::class.java))
-                finish()
-            }
+        if (openGlVersionString.toDouble() < MIN_OPENGL_VERSION) {
+            Log.e(TAG, "Sceneform requires OpenGL ES 3.0 later")
+            return false
         }
+
+        return true
     }
 
 }
