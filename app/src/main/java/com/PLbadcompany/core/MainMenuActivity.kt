@@ -1,9 +1,7 @@
 package com.PLbadcompany.core
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.PLbadcompany.R
@@ -27,7 +25,7 @@ class MainMenuActivity : AppCompatActivity() {
 
         singleGameButton = findViewById(R.id.singleGameButton)
         singleGameButton.setOnClickListener {
-            startActivity(Intent(this, SinglePlayerActivity::class.java))
+            startActivity(Intent(this, ArActivity::class.java))
         }
     }
 

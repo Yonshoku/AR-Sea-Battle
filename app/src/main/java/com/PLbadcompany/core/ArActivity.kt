@@ -1,10 +1,10 @@
 package com.PLbadcompany.core
 
-import android.graphics.Color.RED
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.PLbadcompany.R
+import com.google.ar.core.Config
 import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.*
@@ -15,71 +15,55 @@ import com.gorisse.thomas.sceneform.lightEstimationConfig
 
 // Todo
 // 1. Clear anchors
+// 2. Log
 
-class SinglePlayerActivity : AppCompatActivity() {
+class ArActivity : AppCompatActivity() {
     private var TAG = this::class.java.simpleName
 
     private lateinit var arFragment : ArFragment
-
-    private var battlefieldCube: ModelRenderable? = null
-    private var battlefieldCubeSize : Float = 0.1f
-    private var battlefieldDelimiterSize : Float = 0.02f
-    private var battlefieldMaterial: Material? = null
-    private val battlefieldMaterialColor : Int = android.graphics.Color.parseColor("#4D7EF2") // Color(133f, 209f, 232f, 1f)
-    private var battlefieldCubes : Array<Array<TransformableNode?>> = Array(10) {Array(10) {null} }
-    private var battlefieldScale : Int = 1
+    private lateinit var placementHelper : ArSceneBattlefieldPlacementHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "Single player activity has created")
+
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.single_player_activity)
+        setContentView(R.layout.ar_activity)
 
         arFragment = supportFragmentManager.findFragmentById(R.id.single_player_ar_fragment) as ArFragment
+        placementHelper = ArSceneBattlefieldPlacementHelper(arFragment, this)
+        configArFragment()
 
-        initBattlefieldCubeAndMaterial(battlefieldCubeSize)
-
-        arFragment
-            .setOnTapArPlaneListener { hitResult, plane, motionEvent ->
+        arFragment.setOnTapArPlaneListener { hitResult, plane, motionEvent ->
                 val anchor = hitResult.createAnchor()
                 val anchorNode = AnchorNode(anchor)
                 anchorNode.parent = arFragment.arSceneView.scene
-                setBattlefield(anchorNode, battlefieldScale)
-                arFragment.arSceneView.lightEstimationConfig = LightEstimationConfig.DISABLED
+
+                placementHelper.placeBattlefield(anchorNode)
 
                 arFragment.arSceneView.scene.addChild(anchorNode)
             }
     }
 
-    private fun initBattlefieldCubeAndMaterial(size : Float) {
-        MaterialFactory.makeOpaqueWithColor(this, Color(battlefieldMaterialColor))
-            .thenAccept { material ->
-                val vector3 = Vector3(size, size, size)
-                battlefieldCube = ShapeFactory.makeCube(vector3, Vector3.zero(), material)
-                battlefieldCube!!.isShadowCaster = false
-                battlefieldCube!!.isShadowReceiver = false
+    private fun configArFragment() {
+        arFragment.apply {
+            setOnSessionConfigurationListener { session, config ->
+                // Depth
+                if (session.isDepthModeSupported(Config.DepthMode.AUTOMATIC)) {
+                    config.depthMode = Config.DepthMode.AUTOMATIC
+                }
 
-                battlefieldMaterial = material
+                // Lights
+                arSceneView.lightEstimationConfig = LightEstimationConfig.DISABLED
             }
-    }
-
-    private fun setBattlefield(anchorNode: AnchorNode, scale : Int) {
-        var node : TransformableNode?
-        val y : Float = 0.05f * scale // Height above the ground
-
-        for (i in 0..9) {
-            for (j in 0..9) {
-                node = TransformableNode(arFragment.transformationSystem)
-                node.renderable = battlefieldCube
-                node.parent = anchorNode
-                node.localPosition = Vector3(
-                    battlefieldCubeSize * scale * j + battlefieldDelimiterSize * scale * j,
-                    y * scale,
-                    battlefieldCubeSize * scale * i + battlefieldDelimiterSize * scale * i
-                )
-                node.isSelectable = false
+            setOnViewCreatedListener { arSceneView ->
+                // Available modes: DEPTH_OCCLUSION_DISABLED, DEPTH_OCCLUSION_ENABLED
+                arSceneView.cameraStream.depthOcclusionMode =
+                    CameraStream.DepthOcclusionMode.DEPTH_OCCLUSION_ENABLED
             }
+
         }
     }
+
 
     /* private fun initBattlefieldControlScrolls() {
         val seekBar1 = findViewById<SeekBar>(R.id.seekBar1)

@@ -46,7 +46,7 @@
             android:name=".lan.ConnectionsListActivity"
             android:exported="false" />
         <activity
-            android:name=".core.SinglePlayerActivity"
+            android:name=".core.ArActivity"
             android:exported="false" />
         <activity
             android:name=".core.MainMenuActivity"
