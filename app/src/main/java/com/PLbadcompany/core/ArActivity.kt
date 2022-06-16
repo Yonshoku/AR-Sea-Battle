@@ -23,6 +23,8 @@ class ArActivity : AppCompatActivity() {
     private lateinit var arFragment : ArFragment
     private lateinit var placementHelper : ArSceneBattlefieldPlacementHelper
 
+    private lateinit var seaBattle: SeaBattle
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "Single player activity has created")
 
@@ -33,15 +35,19 @@ class ArActivity : AppCompatActivity() {
         placementHelper = ArSceneBattlefieldPlacementHelper(arFragment, this)
         configArFragment()
 
+        seaBattle = SeaBattle(SeaBattle.SINGLE_PLAYER_MODE)
+
         arFragment.setOnTapArPlaneListener { hitResult, plane, motionEvent ->
                 val anchor = hitResult.createAnchor()
                 val anchorNode = AnchorNode(anchor)
                 anchorNode.parent = arFragment.arSceneView.scene
 
-                placementHelper.placeBattlefield(anchorNode)
+                placementHelper.placeBattlefield(anchorNode, seaBattle.player1!!.ownField, seaBattle.player1!!.enemyField)
 
                 arFragment.arSceneView.scene.addChild(anchorNode)
             }
+
+
     }
 
     private fun configArFragment() {
