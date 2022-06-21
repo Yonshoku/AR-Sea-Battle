@@ -22,7 +22,7 @@ class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val context
     private var bShotCubeSize: Float = bCubeSize
 
     private var shipCubeRenderable : ModelRenderable? = null
-    private var shipCubeSize : Float = 0.06f
+    private var shipCubeSize : Float = 0.08f
 
     private var shotShipCubeRenderable: ModelRenderable? = null
     private var shotShipCubeSize: Float = shipCubeSize
@@ -31,9 +31,9 @@ class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val context
     private var delimiterCubeSize : Float = 0.02f
 
     private val untouchedColor : Int = android.graphics.Color.parseColor("#4D7EF2")
-    private val shipColor : Int = android.graphics.Color.parseColor("#FFFFFF")
+    private val shipColor : Int = android.graphics.Color.parseColor("#020304")
     private val shotShipColor : Int = android.graphics.Color.parseColor("#D50000")
-    private val shotColor : Int = android.graphics.Color.parseColor("#B3B3B3")
+    private val shotColor : Int = android.graphics.Color.parseColor("#C3D5FF")
     private val delimiterCubeColor : Int = android.graphics.Color.parseColor("#FFFFFF")
 
     private var shipMaterial: Material? = null
@@ -140,7 +140,7 @@ class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val context
                     bCube.renderable = bCubeRenderable
                     bCube.renderable!!.material = untouchedMaterial
 
-                    bCube.localPosition = Vector3(
+                     bCube.localPosition = Vector3(
                         bCubeSize * j + delimiterCubeSize * j + shift,
                         y,
                         bCubeSize * i + delimiterCubeSize * i
@@ -164,19 +164,6 @@ class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val context
                     bCube.isSelectable = false
                     bCube.parent = anchorNode
 
-                    shipCube = TransformableNode(arFragment.transformationSystem)
-                    shipCube.renderable = shipCubeRenderable
-                    shipCube.renderable!!.material = shipMaterial
-
-                    shipCube.localPosition = Vector3(
-                        bCubeSize * j + delimiterCubeSize * j + shift,
-                        y,
-                        bCubeSize * i + delimiterCubeSize * i
-                    )
-
-                    shipCube.isSelectable = false
-                    shipCube.parent = anchorNode
-
                     if (field.cellStatesMap[j][i] == CellState.SHIP) {
                         // SHIP
                         shipCube = TransformableNode(arFragment.transformationSystem)
@@ -185,7 +172,7 @@ class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val context
 
                         shipCube.localPosition = Vector3(
                             bCubeSize * j + delimiterCubeSize * j + shift,
-                            y,
+                            y / 2 + bCubeSize,
                             bCubeSize * i + delimiterCubeSize * i
                         )
 
@@ -201,7 +188,7 @@ class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val context
 
                         shipCube.localPosition = Vector3(
                             bCubeSize * j + delimiterCubeSize * j + shift,
-                            y,
+                            y / 2 + bCubeSize,
                             bCubeSize * i + delimiterCubeSize * i
                         )
 
@@ -246,8 +233,6 @@ class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val context
                         bCubeSize * (i + 1) + delimiterCubeSize * (i - 2)
                     )
                 }
-
-
 
             }
         }
