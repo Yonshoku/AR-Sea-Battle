@@ -34,7 +34,7 @@
         android:theme="@style/Theme.Varyag">
         <meta-data android:name="com.google.ar.core" android:value="required" />
         <activity
-            android:name=".core.StartAppCheckingActivity"
+            android:name=".core.menu.StartAppCheckingActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,10 +46,10 @@
             android:name=".lan.ConnectionsListActivity"
             android:exported="false" />
         <activity
-            android:name=".core.ArActivity"
+            android:name=".core.controller.ArActivityController"
             android:exported="false" />
         <activity
-            android:name=".core.MainMenuActivity"
+            android:name=".core.menu.MainMenuActivity"
             android:exported="false" />
     </application>
 

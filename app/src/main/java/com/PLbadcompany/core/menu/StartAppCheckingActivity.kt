@@ -1,17 +1,13 @@
-package com.PLbadcompany.core
+package com.PLbadcompany.core.menu
 
 import android.Manifest
-import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.PLbadcompany.R
 import com.PLbadcompany.common.DialogHelper

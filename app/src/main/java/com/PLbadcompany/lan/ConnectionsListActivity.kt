@@ -1,21 +1,18 @@
 package com.PLbadcompany.lan
 
 import android.Manifest
-import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import com.PLbadcompany.core.MainMenuActivity
+import com.PLbadcompany.core.menu.MainMenuActivity
 import com.PLbadcompany.R
 import com.PLbadcompany.common.DialogHelper
 import com.PLbadcompany.common.PermissionHelper
-import java.net.ServerSocket
 
 // Todo
 // 1. Add connection in onResolved

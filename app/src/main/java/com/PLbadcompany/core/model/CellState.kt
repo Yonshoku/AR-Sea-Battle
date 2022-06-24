@@ -1,4 +1,4 @@
-package com.PLbadcompany.core
+package com.PLbadcompany.core.model
 
 enum class CellState {
     UNTOUCHED,

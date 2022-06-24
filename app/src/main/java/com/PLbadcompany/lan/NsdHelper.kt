@@ -8,7 +8,7 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityOptionsCompat
 import com.PLbadcompany.common.DialogHelper
-import com.PLbadcompany.core.MainMenuActivity
+import com.PLbadcompany.core.menu.MainMenuActivity
 import java.net.InetAddress
 
 class NsdHelper (val connectionsListActivity: ConnectionsListActivity) {

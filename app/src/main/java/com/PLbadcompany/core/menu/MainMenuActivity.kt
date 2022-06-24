@@ -1,4 +1,4 @@
-package com.PLbadcompany.core
+package com.PLbadcompany.core.menu
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,6 +6,7 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.PLbadcompany.R
 import com.PLbadcompany.common.DialogHelper
+import com.PLbadcompany.core.controller.ArActivityController
 import com.PLbadcompany.lan.ConnectionsListActivity
 
 class MainMenuActivity : AppCompatActivity() {
@@ -25,7 +26,7 @@ class MainMenuActivity : AppCompatActivity() {
 
         singleGameButton = findViewById(R.id.singleGameButton)
         singleGameButton.setOnClickListener {
-            startActivity(Intent(this, ArActivity::class.java))
+            startActivity(Intent(this, ArActivityController::class.java))
         }
     }
 

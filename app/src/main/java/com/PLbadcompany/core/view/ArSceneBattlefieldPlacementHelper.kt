@@ -1,13 +1,19 @@
-package com.PLbadcompany.core
+package com.PLbadcompany.core.view
 
 import android.content.Context
+import android.util.Log
+import com.PLbadcompany.core.model.CellState
+import com.PLbadcompany.core.Field
+import com.PLbadcompany.core.model.EnemyField
+import com.PLbadcompany.core.model.OwnField
+import com.PLbadcompany.core.model.Player
 import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.*
 import com.google.ar.sceneform.ux.ArFragment
 import com.google.ar.sceneform.ux.TransformableNode
 
-class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val context: Context){
+class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val player: Player, val context: Context){
     private val TAG = this::class.java.simpleName
     var anchorNode: AnchorNode? = null
 
@@ -51,8 +57,6 @@ class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val context
     private var enemyShipCubes: Array<Array<TransformableNode?>> = Array(10) {Array(10) {null} }
     private var ownShipCubes: Array<Array<TransformableNode?>> = Array(10) {Array(10) {null} }
 
-    private var ownField: OwnField? = null
-    private var enemyField: EnemyField? = null
     private var activeFieldX: Int = 4
     private var activeFieldY: Int = 4
 
@@ -129,13 +133,10 @@ class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val context
 
     }
 
-    fun placeBattlefield(ownField: OwnField, enemyField: EnemyField) {
-        this.ownField = ownField
-        this.enemyField = enemyField
-
+    fun placeBattlefield() {
         val y = 0.01f
 
-        placeField(0f, ownField)
+        placeField(0f, player.ownField)
 
         // Place delimiter between fields
         placeParallelepiped(
@@ -144,7 +145,7 @@ class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val context
             shift - 5 * delimiterCubeSize, y, -2 * delimiterCubeSize
         )
 
-        placeField(shift, enemyField)
+        placeField(shift, player.enemyField)
     }
 
     fun setFieldActive(isOwn: Boolean, x: Int, y: Int) {
@@ -152,10 +153,10 @@ class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val context
         val bCube: TransformableNode?
 
         if (isOwn) {
-            bCube = ownFieldCubes[x][y]
+            bCube = ownFieldCubes[y][x]
 
         } else {
-            bCube = enemyFieldCubes[x][y]
+            bCube = enemyFieldCubes[y][x]
         }
 
         aCube = placeFieldCube(
@@ -167,17 +168,17 @@ class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val context
         )
 
         if (isOwn) {
-            ownFieldCubes[x][y] = aCube
+            ownFieldCubes[y][x] = aCube
 
             // Return previous state to previous active field
             if (!(activeFieldX == x && activeFieldY == y))
-                    updateCellState(isOwn, activeFieldX, activeFieldY, ownField!!.cellStatesMap[x][y])
+                    updateCellState(true, activeFieldX, activeFieldY, player.ownField.cellStatesMap[activeFieldY][activeFieldX])
         } else {
-            enemyFieldCubes[x][y] = aCube
+            enemyFieldCubes[y][x] = aCube
 
             // Return previous state to previous active field
             if (!(activeFieldX == x && activeFieldY == y))
-                updateCellState(isOwn, activeFieldX, activeFieldY, enemyField!!.cellStatesMap[x][y])
+                updateCellState(false, activeFieldX, activeFieldY, player.enemyField.cellStatesMap[activeFieldY][activeFieldX])
         }
 
         activeFieldX = x
@@ -195,13 +196,23 @@ class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val context
         val newShipCube: TransformableNode?
 
         if (isOwn) {
-            bCube = ownFieldCubes[x][y]
-            shipCube = ownShipCubes[x][y]
-            ownField!!.cellStatesMap[x][y] = state
+            bCube = ownFieldCubes[y][x]
+            shipCube = ownShipCubes[y][x]
+            player.ownField.cellStatesMap[y][x] = state
         } else {
-            bCube = enemyFieldCubes[x][y]
-            shipCube = enemyShipCubes[x][y]
-            enemyField!!.cellStatesMap[x][y] = state
+            bCube = enemyFieldCubes[y][x]
+
+            // Create ship cube on enemy field
+            shipCube = placeShipCube(
+                shipCubeRenderable,
+                shipMaterial,
+                bCubeSize * x + delimiterCubeSize * x + shift,
+                bCubeSize / 2 ,
+                bCubeSize * y + delimiterCubeSize * y
+            )
+            enemyShipCubes[y][x] = shipCube
+
+            player.enemyField.cellStatesMap[y][x] = state
         }
 
         when (state) {
@@ -217,8 +228,8 @@ class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val context
                 // Remove previous bCube
                 anchorNode!!.removeChild(bCube)
 
-                if (isOwn) ownFieldCubes[x][y] = newBCube
-                else enemyFieldCubes[x][y] = newBCube
+                if (isOwn) ownFieldCubes[y][x] = newBCube
+                else enemyFieldCubes[y][x] = newBCube
             }
 
             CellState.SHOT -> {
@@ -233,8 +244,8 @@ class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val context
                 // Remove previous bCube
                 anchorNode!!.removeChild(bCube)
 
-                if (isOwn) ownFieldCubes[x][y] = newBCube
-                else enemyFieldCubes[x][y] = newBCube
+                if (isOwn) ownFieldCubes[y][x] = newBCube
+                else enemyFieldCubes[y][x] = newBCube
             }
 
             CellState.SHIP -> {
@@ -249,8 +260,8 @@ class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val context
                 // Remove previous bCube
                 anchorNode!!.removeChild(bCube)
 
-                if (isOwn) ownFieldCubes[x][y] = newBCube
-                else enemyFieldCubes[x][y] = newBCube
+                if (isOwn) ownFieldCubes[y][x] = newBCube
+                else enemyFieldCubes[y][x] = newBCube
 
 
                 newShipCube = placeShipCube(
@@ -261,8 +272,8 @@ class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val context
                     shipCube.localPosition.z
                 )
 
-                if (isOwn) ownShipCubes[x][y] = newShipCube
-                else enemyShipCubes[x][y] = newShipCube
+                if (isOwn) ownShipCubes[y][x] = newShipCube
+                else enemyShipCubes[y][x] = newShipCube
 
                 // Remove previous shipCube
                 anchorNode!!.removeChild(shipCube)
@@ -280,8 +291,8 @@ class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val context
                 // Remove previous bCube
                 anchorNode!!.removeChild(bCube)
 
-                if (isOwn) ownFieldCubes[x][y] = newBCube
-                else enemyFieldCubes[x][y] = newBCube
+                if (isOwn) ownFieldCubes[y][x] = newBCube
+                else enemyFieldCubes[y][x] = newBCube
 
 
                 newShipCube = placeShipCube(
@@ -292,8 +303,8 @@ class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val context
                     shipCube.localPosition.z
                 )
 
-                if (isOwn) ownShipCubes[x][y] = newShipCube
-                else enemyShipCubes[x][y] = newShipCube
+                if (isOwn) ownShipCubes[y][x] = newShipCube
+                else enemyShipCubes[y][x] = newShipCube
 
                 // Remove previous shipCube
                 anchorNode!!.removeChild(shipCube)
@@ -338,7 +349,7 @@ class ArSceneBattlefieldPlacementHelper (val arFragment: ArFragment, val context
         for (i in 0 until 10) {
             for (j in 0 until 10) {
                 // Place cube and ship
-                when (field.cellStatesMap[j][i]) {
+                when (field.cellStatesMap[i][j]) {
                     CellState.UNTOUCHED -> {
                         bCube = placeFieldCube(
                             bCubeRenderable,
