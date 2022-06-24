@@ -23,7 +23,7 @@
     <uses-feature android:name="android.hardware.camera.ar" />
 
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
-    <uses-permission android:name="android.permission.NFC"/>
+    <uses-permission android:name="android.permission.NFC"/>\
 
     <application
         android:allowBackup="true"

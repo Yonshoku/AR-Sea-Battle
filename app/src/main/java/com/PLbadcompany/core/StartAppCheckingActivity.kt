@@ -21,7 +21,7 @@ import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationExceptio
 
 
 // TODO
-// 1. Test all checking failures
+// 1. Make app landscape
 
 class StartAppCheckingActivity : AppCompatActivity() {
     private val TAG = this::class.java.simpleName

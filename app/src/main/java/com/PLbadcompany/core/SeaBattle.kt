@@ -1,5 +1,9 @@
 package com.PLbadcompany.core
 
+// TODO
+// 1. Create queue of players
+// 2. Win and lose logic
+
 class SeaBattle (private val gameMode: Int){
     var player1: Player? = null
     var player2: Player? = null

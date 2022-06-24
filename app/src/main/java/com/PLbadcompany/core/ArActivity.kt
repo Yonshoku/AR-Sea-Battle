@@ -2,34 +2,40 @@ package com.PLbadcompany.core
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.SeekBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.PLbadcompany.R
 import com.google.ar.core.Config
 import com.google.ar.sceneform.AnchorNode
-import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.*
 import com.google.ar.sceneform.ux.ArFragment
-import com.google.ar.sceneform.ux.TransformableNode
 import com.gorisse.thomas.sceneform.light.LightEstimationConfig
 import com.gorisse.thomas.sceneform.lightEstimationConfig
 
 // Todo
-// 1. Clear anchors
-// 2. Log
+// 1. Create scrolls and make them work
+// 2. Create shoot button and make it work
 
 class ArActivity : AppCompatActivity() {
     private var TAG = this::class.java.simpleName
 
+    private var wasArPlaneTapped: Boolean = false
     private lateinit var arFragment : ArFragment
     private lateinit var placementHelper : ArSceneBattlefieldPlacementHelper
 
     private lateinit var seaBattle: SeaBattle
+
+    private var horizontalSeekBarValue = 5
+    private var verticalSeekBarValue = 5
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "Single player activity has created")
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.ar_activity)
+
+        initBattlefieldControlScrolls()
 
         arFragment = supportFragmentManager.findFragmentById(R.id.single_player_ar_fragment) as ArFragment
         placementHelper = ArSceneBattlefieldPlacementHelper(arFragment, this)
@@ -38,15 +44,21 @@ class ArActivity : AppCompatActivity() {
         seaBattle = SeaBattle(SeaBattle.SINGLE_PLAYER_MODE)
 
         arFragment.setOnTapArPlaneListener { hitResult, plane, motionEvent ->
-                val anchor = hitResult.createAnchor()
-                val anchorNode = AnchorNode(anchor)
-                anchorNode.parent = arFragment.arSceneView.scene
+            if (wasArPlaneTapped)
+                return@setOnTapArPlaneListener
 
-                placementHelper.placeBattlefield(anchorNode, seaBattle.player1!!.ownField, seaBattle.player1!!.enemyField)
+            wasArPlaneTapped = true
 
-                arFragment.arSceneView.scene.addChild(anchorNode)
-            }
+            val anchor = hitResult.createAnchor()
+            val anchorNode = AnchorNode(anchor)
+            anchorNode.parent = arFragment.arSceneView.scene
 
+            placementHelper.anchorNode = anchorNode
+            placementHelper.placeBattlefield(seaBattle.player1!!.ownField, seaBattle.player1!!.enemyField)
+            placementHelper.setFieldActive(false, 4, 4)
+
+            arFragment.arSceneView.scene.addChild(anchorNode)
+        }
 
     }
 
@@ -71,29 +83,38 @@ class ArActivity : AppCompatActivity() {
     }
 
 
-    /* private fun initBattlefieldControlScrolls() {
-        val seekBar1 = findViewById<SeekBar>(R.id.seekBar1)
-        val textView1 = findViewById<TextView>(R.id.seekBarValue1)
-        seekBar1.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+    private fun initBattlefieldControlScrolls() {
+        val horizontal = findViewById<SeekBar>(R.id.horizontalSeekbar)
+        val horizontalValue = findViewById<TextView>(R.id.horizontalSeekbarValue)
+
+        val vertical = findViewById<SeekBar>(R.id.verticalSeekbar)
+        val verticalValue = findViewById<TextView>(R.id.verticalSeekbarValue)
+
+        var alphabet = listOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J")
+
+        horizontal.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                textView1.text = progress.toString()
+                horizontalValue.text = alphabet[progress - 1]
+                horizontalSeekBarValue = progress
+                placementHelper.setFieldActive(false, verticalSeekBarValue - 1, progress - 1)
             }
 
             override fun onStartTrackingTouch(seekBar1: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar1: SeekBar?) {}
         })
 
-        val seekBar2 = findViewById<SeekBar>(R.id.seekBar2)
-        val textView2 = findViewById<TextView>(R.id.seekBarValue2)
-        seekBar2.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+
+        vertical.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                textView2.text = progress.toString()
+                verticalValue.text = progress.toString()
+                verticalSeekBarValue = progress
+                placementHelper.setFieldActive(false, progress - 1, horizontalSeekBarValue - 1)
             }
 
             override fun onStartTrackingTouch(seekBar2: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar2: SeekBar?) {}
         })
-    } */
+    }
 
 
 }

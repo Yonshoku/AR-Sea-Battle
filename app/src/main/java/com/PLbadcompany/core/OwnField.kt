@@ -1,5 +1,8 @@
 package com.PLbadcompany.core
 
+// TODO
+// 1. Random ship placement generation
+
 class OwnField() : Field() {
     init {
         for (i in 0..9) {
